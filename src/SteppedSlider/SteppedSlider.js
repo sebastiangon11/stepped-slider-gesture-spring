@@ -32,7 +32,6 @@ export const SteppedSlider = ({
     const deltaPercentage = (xMov * 100) / (window.innerWidth / dragSensibility)
     const x = (i - index.current) * withPercentage + (down ? deltaPercentage : 0)
     let scale = down ? 1 - distance / (withPercentage * scaleFactor) : 1
-    // scale = subScaleInactives && i === index.current ? scale : scale * 0.9
     scale = subScaleInactives && i !== index.current ? scale * 0.9 : scale
     return { x, scale }
   }
