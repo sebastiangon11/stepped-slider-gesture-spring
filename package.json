@@ -1,0 +1,27 @@
+{
+  "name": "banner-poc",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "homepage": "https://codesandbox.io/s/new",
+  "main": "src/index.js",
+  "dependencies": {
+    "@testing-library/jest-dom": "5.11.6",
+    "@testing-library/react": "11.2.1",
+    "lodash-es": "4.17.11",
+    "prop-types": "15.7.2",
+    "react": "16.8.6",
+    "react-dom": "16.8.6",
+    "react-scripts": "3.0.0",
+    "react-spring": "9.0.0-rc.3",
+    "react-use-gesture": "8.0.1",
+    "styled-components": "5.2.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}
