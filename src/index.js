@@ -13,6 +13,7 @@ const pages = [
 
 const buildImage = (page) => (
   <img
+    id={page}
     alt="some alt text"
     draggable={false}
     key={page}
@@ -27,8 +28,10 @@ const buildImage = (page) => (
 )
 
 render(
-  <SteppedSlider subScaleInactives spacing={0} height={100} slidewidth={75} scaleFactor={9} dragSensibility={1.2}>
-    {pages.map(buildImage)}
-  </SteppedSlider>,
+  <div style={{ margin: '0 10px', border: '1px solid black' }}>
+    <SteppedSlider spacing={0} height={200} slidewidth={85} align="justify" subScaleInactives>
+      {pages.map(buildImage)}
+    </SteppedSlider>
+  </div>,
   document.getElementById('root')
 )

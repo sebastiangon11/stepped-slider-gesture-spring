@@ -7,6 +7,8 @@ import clamp from 'lodash-es/clamp'
 
 import { ImageContainerDiv } from './SteppedSlider.styles'
 
+import { AlignStrategies } from './align-strategies'
+
 export const SteppedSlider = ({
   children,
   activeIndex = 0,
@@ -15,60 +17,71 @@ export const SteppedSlider = ({
   spacing = 0,
   height = 100,
   slidewidth = 100,
-  scaleFactor = 9,
-  dragSensibility = 1.2
+  align
 }) => {
-  const childrenArray = React.Children.toArray(children)
+  const slides = React.Children.toArray(children)
 
   const index = useRef(0)
-  const withPercentage = 100
 
   useEffect(() => {
     if (activeIndex !== index.current) moveSlide(activeIndex)
   }, [activeIndex])
 
   // Returns fitting styles for dragged/idle items
-  const fn = ({ xMov = 0, down = false, distance = 0 } = {}) => (i) => {
-    const deltaPercentage = (xMov * 100) / (window.innerWidth / dragSensibility)
-    const x = (i - index.current) * withPercentage + (down ? deltaPercentage : 0)
-    let scale = down ? 1 - distance / (withPercentage * scaleFactor) : 1
-    scale = subScaleInactives && i !== index.current ? scale * 0.9 : scale
+  const calculateMovement = ({ xMov = 0, down = false } = {}) => (springIndex) => {
+    const spacingPercentage = (spacing * 100) / slidewidth
+    const offset = 100 - (slidewidth - spacing)
+    const offsetPercentage = (offset / slidewidth) * 100
+
+    const currentSlideIndex = index.current
+    const slidesCount = slides.length - 1
+
+    let x = (springIndex - currentSlideIndex) * 100
+
+    if (typeof AlignStrategies[align] === 'function')
+      x = AlignStrategies[align]({ x, offsetPercentage, spacingPercentage, currentSlideIndex, slidesCount })
+
+    if (down) {
+      const deltaPercentage = (xMov * 100) / (window.innerWidth / 1.2)
+      x += deltaPercentage
+    }
+
+    let scale = down ? 1 - Math.abs(xMov) / (100 * 9) : 1
+    scale = subScaleInactives && springIndex !== index.current ? scale * 0.9 : scale
+
     return { x, scale }
   }
 
-  const [springs, setSprings] = useSprings(childrenArray.length, (i) => ({
-    x: i * withPercentage,
-    scale: subScaleInactives && i !== index.current ? 0.9 : 1
-  }))
+  const [springs, setSprings] = useSprings(slides.length, calculateMovement({}))
 
-  const bind = useDrag(({ down, movement: [xMov], direction: [xDir], distance, cancel }) => {
-    if (down && distance > window.innerWidth * 0.2) {
+  const bind = useDrag(({ down, movement: [xMov], direction: [xDir], cancel }) => {
+    if (down && Math.abs(xMov) > window.innerWidth * 0.2) {
       cancel()
-      index.current = clamp(index.current + (xDir > 0 ? -1 : 1), 0, childrenArray.length - 1)
+      index.current = clamp(index.current + (xDir > 0 ? -1 : 1), 0, slides.length - 1)
       onIndexChange(index.current)
     }
 
-    setSprings(fn({ down, xMov, distance }))
+    setSprings(calculateMovement({ down, xMov }))
   })
 
   const moveSlide = (newIndex) => {
-    index.current = clamp(newIndex, 0, childrenArray.length - 1)
-    setSprings(fn({}))
+    index.current = clamp(newIndex, 0, slides.length - 1)
+    setSprings(calculateMovement({}))
     onIndexChange(index.current)
   }
 
   return (
-    <div style={{ height, position: 'relative', touchAction: 'pan-y' }}>
-      {springs.map(({ x, scale }, i) => (
+    <div style={{ height, position: 'relative', touchAction: 'pan-y', overflow: 'hidden' }}>
+      {springs.map(({ x, scale }, springIndex) => (
         <ImageContainerDiv
           {...bind()}
-          key={childrenArray[i].props.id}
-          spacing={spacing}
+          key={slides[springIndex].props.id}
+          spacing={springIndex === slides.length - 1 ? 0 : spacing}
           slidewidth={slidewidth}
           style={{
             transform: to([x, scale], (t, s) => `translate3d(${t}%,0,0) scale(${s})`)
           }}>
-          {childrenArray[i]}
+          {slides[springIndex]}
         </ImageContainerDiv>
       ))}
     </div>
@@ -81,7 +94,7 @@ SteppedSlider.propTypes = {
   onIndexChange: PropTypes.func,
   subScaleInactives: PropTypes.bool,
   spacing: PropTypes.number,
-  height: PropTypes.string,
+  height: PropTypes.number,
   slidewidth: PropTypes.number,
   scaleFactor: PropTypes.number,
   dragSensibility: PropTypes.number
