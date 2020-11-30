@@ -32,7 +32,6 @@ export const SteppedSlider = ({
     const spacingPercentage = (spacing * 100) / slidewidth
     const offset = 100 - (slidewidth - spacing)
     const offsetPercentage = (offset / slidewidth) * 100
-
     const currentSlideIndex = index.current
     const slidesCount = slides.length - 1
 
@@ -96,6 +95,5 @@ SteppedSlider.propTypes = {
   spacing: PropTypes.number,
   height: PropTypes.number,
   slidewidth: PropTypes.number,
-  scaleFactor: PropTypes.number,
-  dragSensibility: PropTypes.number
+  align: PropTypes.string
 }

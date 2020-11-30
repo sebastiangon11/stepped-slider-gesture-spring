@@ -7,8 +7,8 @@ const justify = ({ x, offsetPercentage, spacingPercentage, currentSlideIndex, sl
   return x
 }
 
-const center = ({ x, lastSlideIsActive, offsetPercentage, spacingPercentage }) => {
-  if (lastSlideIsActive) {
+const center = ({ x, offsetPercentage, spacingPercentage, currentSlideIndex, slidesCount }) => {
+  if (currentSlideIndex === slidesCount) {
     x += offsetPercentage / 2 - spacingPercentage / 2
   } else {
     x = x + offsetPercentage / 2
