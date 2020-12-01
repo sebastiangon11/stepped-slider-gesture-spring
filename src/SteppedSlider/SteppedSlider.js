@@ -15,6 +15,7 @@ export const SteppedSlider = ({
   onIndexChange = () => {},
   subScaleInactives = false,
   spacing = 0,
+  overflow = 'hidden',
   height = 100,
   slidewidth = 100,
   align
@@ -38,7 +39,13 @@ export const SteppedSlider = ({
     let x = (springIndex - currentSlideIndex) * 100
 
     if (typeof AlignStrategies[align] === 'function')
-      x = AlignStrategies[align]({ x, offsetPercentage, spacingPercentage, currentSlideIndex, slidesCount })
+      x = AlignStrategies[align]({
+        x,
+        offsetPercentage,
+        spacingPercentage,
+        currentSlideIndex,
+        slidesCount
+      })
 
     if (down) {
       const deltaPercentage = (xMov * 100) / (window.innerWidth / 1.2)
@@ -70,7 +77,7 @@ export const SteppedSlider = ({
   }
 
   return (
-    <div style={{ height, position: 'relative', touchAction: 'pan-y', overflow: 'hidden' }}>
+    <div style={{ height, position: 'relative', touchAction: 'pan-y', overflow }}>
       {springs.map(({ x, scale }, springIndex) => (
         <ImageContainerDiv
           {...bind()}
@@ -93,7 +100,8 @@ SteppedSlider.propTypes = {
   onIndexChange: PropTypes.func,
   subScaleInactives: PropTypes.bool,
   spacing: PropTypes.number,
-  height: PropTypes.number,
+  overflow: PropTypes.string,
+  height: PropTypes.string,
   slidewidth: PropTypes.number,
   align: PropTypes.string
 }

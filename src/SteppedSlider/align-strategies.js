@@ -4,6 +4,7 @@ const justify = ({ x, offsetPercentage, spacingPercentage, currentSlideIndex, sl
   } else if (currentSlideIndex > 0) {
     x += offsetPercentage / 2
   }
+
   return x
 }
 

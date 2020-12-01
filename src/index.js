@@ -27,7 +27,7 @@ const buildImage = (slide) => (
   />
 )
 
-const strategies = ['center', 'justify']
+const strategies = ['justify', 'center']
 
 const App = () => {
   const [strategy, setStrategy] = useState(strategies[0])
@@ -39,9 +39,11 @@ const App = () => {
           <option key={s}>{s}</option>
         ))}
       </select>
-      <SteppedSlider spacing={0} height={150} slidewidth={75} align={strategy} subScaleInactives>
-        {slides.map(buildImage)}
-      </SteppedSlider>
+      <div style={{ margin: '0 10px', border: '1px dashed gray' }}>
+        <SteppedSlider overflow="visible" spacing={0} height={150} slidewidth={75} align={strategy} subScaleInactives>
+          {slides.map(buildImage)}
+        </SteppedSlider>
+      </div>
     </div>
   )
 }
